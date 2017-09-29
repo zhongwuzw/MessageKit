@@ -161,3 +161,27 @@ public extension AvatarView {
     }
     
 }
+
+// MARK: - Avatar
+
+@available(*, deprecated: 0.9.0, message: "Removed in MessageKit 0.9.0. Please use avatarConfiguration(for:at:in) of MessagesDisplayDelegate")
+public struct Avatar {
+    var image: UIImage?
+    var initials: String = "?"
+
+    init(image: UIImage? = nil, initials: String = "?") {
+        self.image = image
+        self.initials = initials
+    }
+}
+
+// MARK: - MessagesDataSource
+
+public extension MessagesDataSource {
+
+    @available(*, deprecated: 0.9.0, message: "Removed in MessageKit 0.9.0. Please use avatarConfiguration(for:at:in) of MessagesDisplayDelegate")
+    func avatar(for message: MessageType, at  indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> Avatar {
+        return Avatar()
+    }
+
+}
