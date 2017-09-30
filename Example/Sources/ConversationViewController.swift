@@ -193,10 +193,6 @@ extension ConversationViewController: MessagesDataSource {
         return messageList[indexPath.section]
     }
 
-    func avatar(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> Avatar {
-        return SampleData().getAvatarFor(sender: message.sender)
-    }
-
     func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
         let name = message.sender.displayName
       return NSAttributedString(string: name, attributes: [NSAttributedStringKey.font: UIFont.preferredFont(forTextStyle: .caption1)])
@@ -226,6 +222,22 @@ extension ConversationViewController: MessagesDisplayDelegate {
 
     func messageFooterView(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageFooterView? {
         return messagesCollectionView.dequeueMessageFooterView(for: indexPath)
+    }
+
+    func configureAvatar(view: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView, needsReload: @escaping () -> Void) {
+        view.setPlaceholderImageFrom(initials: "MK")
+        if AsyncAvatarService.shared.cacheHasImageFor(section: indexPath.section) {
+            let avatar = AsyncAvatarService.shared.imageFor(section: indexPath.section)
+            view.imageView.image = avatar
+            print("A: Retrieving cached image")
+        } else {
+            AsyncAvatarService.shared.getAvatar(for: indexPath) {
+                DispatchQueue.main.async {
+                    needsReload()
+                    print("B: Inside completion block")
+                }
+            }
+        }
     }
 
 }

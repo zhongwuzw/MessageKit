@@ -28,6 +28,8 @@ open class MessageCollectionViewCell<ContentView: UIView>: UICollectionViewCell 
 
     // MARK: - Properties
 
+    var reloadToken = UUID()
+
     open var messageContainerView: MessageContainerView = {
         let messageContainerView = MessageContainerView()
         messageContainerView.clipsToBounds = true
@@ -124,17 +126,16 @@ open class MessageCollectionViewCell<ContentView: UIView>: UICollectionViewCell 
 
             messageContainerView.backgroundColor = messageColor
             messageContainerView.style = messageStyle
+
         }
 
         // Make sure we set all data source properties after configuring display delegate properties
         // The MessageLabel class probably has a stateful issue
         if let dataSource = messagesCollectionView.messagesDataSource {
 
-            let avatar = dataSource.avatar(for: message, at: indexPath, in: messagesCollectionView)
             let topLabelText = dataSource.cellTopLabelAttributedText(for: message, at: indexPath)
             let bottomLabelText = dataSource.cellBottomLabelAttributedText(for: message, at: indexPath)
 
-            avatarView.set(avatar: avatar)
             cellTopLabel.attributedText = topLabelText
             cellBottomLabel.attributedText = bottomLabelText
         }

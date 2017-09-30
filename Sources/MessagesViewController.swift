@@ -189,6 +189,7 @@ extension MessagesViewController: UICollectionViewDataSource {
 
         guard let messagesCollectionView = collectionView as? MessagesCollectionView else { return UICollectionViewCell() }
         guard let messagesDataSource = messagesCollectionView.messagesDataSource else { fatalError("Please set messagesDataSource") }
+        guard let messagesDisplayDelegate = messagesCollectionView.messagesDisplayDelegate else { fatalError("Please set messagesDisplayDelegate") }
 
         let message = messagesDataSource.messageForItem(at: indexPath, in: messagesCollectionView)
 
@@ -198,18 +199,52 @@ extension MessagesViewController: UICollectionViewDataSource {
                 fatalError("Unable to dequeue TextMessageCell")
             }
             cell.configure(with: message, at: indexPath, and: messagesCollectionView)
+
+            let cachedToken = UUID()
+            cell.reloadToken = cachedToken
+
+            messagesDisplayDelegate.configureAvatar(view: cell.avatarView, for: message, at: indexPath, in: messagesCollectionView) { [weak cell, weak self] in
+                guard let cell = cell, let `self` = self else { return }
+                guard cell.reloadToken == cachedToken else { return }
+                guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
+                guard self.messagesCollectionView.indexPathsForVisibleItems.contains(indexPath) else { return }
+                self.messagesCollectionView.reloadItems(at: [indexPath])
+            }
+
             return cell
         case .photo, .video:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MediaMessageCell", for: indexPath) as? MediaMessageCell else {
                 fatalError("Unable to dequeue MediaMessageCell")
             }
             cell.configure(with: message, at: indexPath, and: messagesCollectionView)
+            let cachedToken = UUID()
+            cell.reloadToken = cachedToken
+
+            messagesDisplayDelegate.configureAvatar(view: cell.avatarView, for: message, at: indexPath, in: messagesCollectionView) { [weak cell, weak self] in
+                guard let cell = cell, let `self` = self else { return }
+                guard cell.reloadToken == cachedToken else { return }
+                guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
+                guard self.messagesCollectionView.indexPathsForVisibleItems.contains(indexPath) else { return }
+                self.messagesCollectionView.reloadItems(at: [indexPath])
+            }
+
             return cell
         case .location:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "LocationMessageCell", for: indexPath) as? LocationMessageCell else {
                 fatalError("Unable to dequeue LocationMessageCell")
             }
             cell.configure(with: message, at: indexPath, and: messagesCollectionView)
+            let cachedToken = UUID()
+            cell.reloadToken = cachedToken
+
+           messagesDisplayDelegate.configureAvatar(view: cell.avatarView, for: message, at: indexPath, in: messagesCollectionView) { [weak cell, weak self] in
+                guard let cell = cell, let `self` = self else { return }
+                guard cell.reloadToken == cachedToken else { return }
+                guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
+                guard self.messagesCollectionView.indexPathsForVisibleItems.contains(indexPath) else { return }
+                self.messagesCollectionView.reloadItems(at: [indexPath])
+            }
+
             return cell
         }
 

@@ -38,6 +38,8 @@ public protocol MessagesDisplayDelegate: class {
     
     func messageFooterView(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageFooterView?
 
+    func configureAvatar(view: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView, needsReload: @escaping () -> Void) -> Void
+
 }
 
 public extension MessagesDisplayDelegate {
@@ -74,6 +76,10 @@ public extension MessagesDisplayDelegate {
 
     func messageFooterView(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageFooterView? {
         return nil
+    }
+
+    func configureAvatar(view: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView, needsReload: @escaping () -> Void) -> Void {
+        //view.setPlaceholderImageFrom(initials: "?")
     }
 
 }

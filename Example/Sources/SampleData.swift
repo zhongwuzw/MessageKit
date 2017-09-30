@@ -84,18 +84,18 @@ struct SampleData {
         return Dan
     }
 
-    func getAvatarFor(sender: Sender) -> Avatar {
+    func getAvatarFor(sender: Sender) -> (UIImage?, String) {
         switch sender {
         case Dan:
-            return Avatar(image: #imageLiteral(resourceName: "Dan-Leonard"), initals: "DL")
+            return (#imageLiteral(resourceName: "Dan-Leonard"),"DL")
         case Steven:
-            return Avatar(initals: "S")
+            return (nil, "S")
         case Jobs:
-            return Avatar(image: #imageLiteral(resourceName: "Steve-Jobs"), initals: "SJ")
+            return (#imageLiteral(resourceName: "Steve-Jobs"), "SJ")
         case Cook:
-            return Avatar(image: #imageLiteral(resourceName: "Tim-Cook"))
+            return (#imageLiteral(resourceName: "Tim-Cook"), "TC")
         default:
-            return Avatar()
+            return (nil, "?")
         }
     }
 }
