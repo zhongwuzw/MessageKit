@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="qIf-zY-DwN">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="qIf-zY-DwN">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Inbox-->
         <scene sceneID="bfl-pY-VjE">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="6WU-8e-ICx" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController title="Inbox" clearsSelectionOnViewWillAppear="NO" id="Pev-jS-Pyn" customClass="InboxViewController" customModule="ChatExample" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="hyI-h1-cQJ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
@@ -23,7 +22,7 @@
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="4QN-sU-5mD" id="1j8-P7-xbT">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -35,6 +34,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="MessageKit" id="pM3-Dy-Tq2"/>
                 </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6WU-8e-ICx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1067" y="-252"/>
         </scene>
@@ -44,8 +44,9 @@
                 <navigationController id="qIf-zY-DwN" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Item" id="v5z-rz-tmh"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="wDg-Rx-L9d">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.27234929800000002" green="0.83826982979999998" blue="0.36501091720000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </navigationBar>
                     <connections>
                         <segue destination="Pev-jS-Pyn" kind="relationship" relationship="rootViewController" id="VVg-Tc-FNs"/>

@@ -28,10 +28,14 @@ import MapKit
 
 class ConversationViewController: MessagesViewController {
 
+    var counter: Int = 1
+
     var messageList: [MockMessage] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        extendedLayoutIncludesOpaqueBars = true
 
         messageList = SampleData().getMessages()
         messagesCollectionView.messagesDataSource = self
@@ -44,6 +48,12 @@ class ConversationViewController: MessagesViewController {
                                                             style: .plain,
                                                             target: self,
                                                             action: #selector(handleKeyboardButton))
+
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        AsyncAvatarService.shared.clearCache()
     }
     
   @objc func handleKeyboardButton() {
@@ -158,6 +168,7 @@ class ConversationViewController: MessagesViewController {
         messageInputBar = newMessageInputBar
         reloadInputViews()
     }
+
     
     // MARK: - Helpers
     
@@ -226,18 +237,20 @@ extension ConversationViewController: MessagesDisplayDelegate {
 
     func configureAvatar(view: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView, needsReload: @escaping () -> Void) {
         view.setPlaceholderImageFrom(initials: "MK")
+        print("Called: ", counter, " times")
         if AsyncAvatarService.shared.cacheHasImageFor(section: indexPath.section) {
             let avatar = AsyncAvatarService.shared.imageFor(section: indexPath.section)
             view.imageView.image = avatar
-            print("A: Retrieving cached image")
+            print("A: Retrieving cached image", self.counter)
         } else {
             AsyncAvatarService.shared.getAvatar(for: indexPath) {
                 DispatchQueue.main.async {
                     needsReload()
-                    print("B: Inside completion block")
+                    print("B: Inside completion block", self.counter)
                 }
             }
         }
+        counter += 1
     }
 
 }

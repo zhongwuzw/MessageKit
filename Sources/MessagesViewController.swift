@@ -203,13 +203,14 @@ extension MessagesViewController: UICollectionViewDataSource {
             let cachedToken = UUID()
             cell.reloadToken = cachedToken
 
-            messagesDisplayDelegate.configureAvatar(view: cell.avatarView, for: message, at: indexPath, in: messagesCollectionView) { [weak cell, weak self] in
+            let block = { [weak cell, weak self] in
                 guard let cell = cell, let `self` = self else { return }
                 guard cell.reloadToken == cachedToken else { return }
                 guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
                 guard self.messagesCollectionView.indexPathsForVisibleItems.contains(indexPath) else { return }
-                self.messagesCollectionView.reloadItems(at: [indexPath])
+                messagesDisplayDelegate.configureAvatar(view: cell.avatarView, for: message, at: indexPath, in: messagesCollectionView, needsReload: {})
             }
+            messagesDisplayDelegate.configureAvatar(view: cell.avatarView, for: message, at: indexPath, in: messagesCollectionView, needsReload: block)
 
             return cell
         case .photo, .video:
@@ -242,7 +243,8 @@ extension MessagesViewController: UICollectionViewDataSource {
                 guard cell.reloadToken == cachedToken else { return }
                 guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
                 guard self.messagesCollectionView.indexPathsForVisibleItems.contains(indexPath) else { return }
-                self.messagesCollectionView.reloadItems(at: [indexPath])
+                //self.messagesCollectionView.reloadItems(at: [indexPath])
+                messagesDisplayDelegate.configureAvatar(view: cell.avatarView, for: message, at: indexPath, in: messagesCollectionView, needsReload: {})
             }
 
             return cell
