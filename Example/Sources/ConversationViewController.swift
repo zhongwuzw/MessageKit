@@ -55,7 +55,7 @@ class ConversationViewController: MessagesViewController {
                                                             action: #selector(handleKeyboardButton))
     }
     
-  @objc func handleKeyboardButton() {
+    @objc func handleKeyboardButton() {
         
         let actionSheetController = UIAlertController(title: "Change Keyboard Style", message: nil, preferredStyle: .actionSheet)
         let actions = [
@@ -207,15 +207,32 @@ extension ConversationViewController: MessagesDataSource {
     }
 
     func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+
+        if indexPath.section > 0 {
+            let lastIndexPath = IndexPath(item: 0, section: indexPath.section - 1)
+            let lastMessage = messageForItem(at: lastIndexPath, in: messagesCollectionView)
+            if lastMessage.sender == message.sender { return nil }
+        }
+
         let name = message.sender.displayName
-      return NSAttributedString(string: name, attributes: [NSAttributedStringKey.font: UIFont.preferredFont(forTextStyle: .caption1)])
+        return NSAttributedString(string: name, attributes: [NSAttributedStringKey.font: UIFont.preferredFont(forTextStyle: .caption1)])
     }
 
     func cellBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+
+        let numberOfSections = numberOfMessages(in: messagesCollectionView)
+        let nextIndexPath = IndexPath(row: 0, section: indexPath.section + 1)
+
+        if nextIndexPath.section < numberOfSections {
+            let lastMessage = messageForItem(at: nextIndexPath, in: messagesCollectionView)
+            if lastMessage.sender == message.sender { return nil }
+        }
+
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         let dateString = formatter.string(from: message.sentDate)
-      return NSAttributedString(string: dateString, attributes: [NSAttributedStringKey.font: UIFont.preferredFont(forTextStyle: .caption2)])
+        return NSAttributedString(string: dateString, attributes: [NSAttributedStringKey.font: UIFont.preferredFont(forTextStyle: .caption2)])
+
     }
 
 }
@@ -229,10 +246,19 @@ extension ConversationViewController: MessagesDisplayDelegate {
     }
 
     func messageStyle(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageStyle {
-        let corner: MessageStyle.TailCorner = isFromCurrentSender(message: message) ? .bottomRight : .bottomLeft
-        return .bubbleTail(corner, .curved)
-//        let configurationClosure = { (view: MessageContainerView) in}
-//        return .custom(configurationClosure)
+
+        // let corner: MessageStyle.TailCorner = isFromCurrentSender(message: message) ? .bottomRight : .bottomLeft
+        // return .bubbleTail(corner, .curved)
+        //
+        // let configurationClosure = { (view: MessageContainerView) in}
+        // return .custom(configurationClosure)
+
+        return .bubble
+    }
+
+    func shouldDisplayHeader(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> Bool {
+        // Disables because breaks up the stacks right now
+        return false
     }
 
 }
@@ -241,11 +267,29 @@ extension ConversationViewController: MessagesDisplayDelegate {
 
 extension ConversationViewController: MessagesLayoutDelegate {
 
+    func avatarSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
+        if indexPath.section > 0 {
+            let lastIndexPath = IndexPath(item: 0, section: indexPath.section - 1)
+            let lastMessage = messageForItem(at: lastIndexPath, in: messagesCollectionView)
+            if lastMessage.sender == message.sender { return .zero }
+        }
+        return CGSize(width: 30, height: 30)
+    }
+
     func messagePadding(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIEdgeInsets {
+
+        var shouldAddAvatarPadding: Bool = false
+
+        if indexPath.section > 0 {
+            let lastIndexPath = IndexPath(item: 0, section: indexPath.section - 1)
+            let lastMessage = messageForItem(at: lastIndexPath, in: messagesCollectionView)
+            if lastMessage.sender == message.sender { shouldAddAvatarPadding = true }
+        }
+
         if isFromCurrentSender(message: message) {
-            return UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 4)
+            return shouldAddAvatarPadding ? UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 34) : UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 4)
         } else {
-            return UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 30)
+            return shouldAddAvatarPadding ? UIEdgeInsets(top: 0, left: 34, bottom: 0, right: 30) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 30)
         }
     }
 
@@ -266,12 +310,12 @@ extension ConversationViewController: MessagesLayoutDelegate {
     }
 
     func avatarAlignment(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> AvatarAlignment {
-        return .messageBottom
+        return .messageTop
     }
 
     func footerViewSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-
-        return CGSize(width: messagesCollectionView.bounds.width, height: 10)
+        return .zero
+        //return CGSize(width: messagesCollectionView.bounds.width, height: 10)
     }
 
 }
