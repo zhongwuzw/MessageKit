@@ -26,8 +26,18 @@ import UIKit
 import MessageKit
 import MapKit
 
+public enum KeyboardStyle {
+    case `default`
+    case slack
+    case iMessage
+}
+
 class ConversationViewController: MessagesViewController {
 
+    lazy var keyboardStyle: KeyboardStyle = {
+        return .default
+    }()
+    
     var messageList: [MockMessage] = [] {
         didSet {
             DispatchQueue.main.async {
@@ -62,26 +72,46 @@ class ConversationViewController: MessagesViewController {
                                                             action: #selector(handleKeyboardButton))
     }
     
+    open override var inputAccessoryView: UIView? {
+        guard presentedViewController == nil else { return nil }
+        return messageInputBar
+    }
+    
     @objc func handleKeyboardButton() {
         
+        messageInputBar.inputTextView.resignFirstResponder()
         let actionSheetController = UIAlertController(title: "Change Keyboard Style", message: nil, preferredStyle: .actionSheet)
         let actions = [
             UIAlertAction(title: "Slack", style: .default, handler: { _ in
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1, execute: {
+                    self.keyboardStyle = .slack
                     self.slack()
                 })
             }),
             UIAlertAction(title: "iMessage", style: .default, handler: { _ in
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1, execute: {
+                    self.keyboardStyle = .iMessage
                     self.iMessage()
                 })
             }),
             UIAlertAction(title: "Default", style: .default, handler: { _ in
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1, execute: {
+                    self.keyboardStyle = .default
                     self.defaultStyle()
                 })
             }),
-            UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1, execute: {
+                    switch self.keyboardStyle {
+                    case .default:
+                        self.defaultStyle()
+                    case .iMessage:
+                        self.iMessage()
+                    case .slack:
+                        self.slack()
+                    }
+                })
+            })
         ]
         actions.forEach { actionSheetController.addAction($0) }
         actionSheetController.view.tintColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
@@ -172,7 +202,6 @@ class ConversationViewController: MessagesViewController {
     }
     
     func defaultStyle() {
-        messageInputBar.inputTextView.resignFirstResponder()
         let newMessageInputBar = MessageInputBar()
         newMessageInputBar.sendButton.tintColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
         newMessageInputBar.delegate = self
